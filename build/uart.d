@@ -1,1 +1,0 @@
- uart.d  uart.p1:  ../uart.c ../uart.h ../pic16f917.h

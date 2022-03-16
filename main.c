@@ -40,6 +40,7 @@ int main(){
 
     // Loading TXREG starts transmission
     uint8_t c = 0xff;
+    TXREG = 0xf0;
 
     while (1);
     return 0;

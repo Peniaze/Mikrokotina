@@ -18,7 +18,7 @@ int usart_init(void){
     tx_bits.SYNC = 0;  // Asynchronous mode
     tx_bits.BRGH = 1;  // High speed
     TXSTA = *((uint8_t*) &tx_bits);
-    TXIE = 0;           // Disable interrupt
+    TXIE = 1;           // Enable interrupt
     TXEN = 1;           // Enable transmission
 
     RCSTAbits_t rx_bits;
