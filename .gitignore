@@ -1,1 +1,7 @@
 .clang_complete
+/build_test
+/build
+/dist
+/nbproject
+/debug
+make.bat
