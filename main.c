@@ -24,7 +24,7 @@ int clock_init(void){
     OSCCONbits_t bits;
     bits.IRCF = 0b110;  // Postscaler -- 4 Mhz
     bits.SCS = 1;       // Internal clock select
-    OSCCON = *((uint8_t*) &bits);
+    OSCCONbits = bits;
     return 0;
 }
 
@@ -33,7 +33,7 @@ int main(){
     INTCONbits_t inter_bits;
     inter_bits.GIE = 1; // Global interrupt enable
     inter_bits.PEIE = 1;  
-    INTCON = *((uint8_t*) &inter_bits);
+    INTCONbits = inter_bits;
 
     clock_init();
     usart_init();

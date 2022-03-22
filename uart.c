@@ -17,7 +17,7 @@ int usart_init(void){
     tx_bits.TX9 = 0;   // 8-bit transmission
     tx_bits.SYNC = 0;  // Asynchronous mode
     tx_bits.BRGH = 1;  // High speed
-    TXSTA = *((uint8_t*) &tx_bits);
+    TXSTAbits = tx_bits;
     TXIE = 1;           // Enable interrupt
     TXEN = 1;           // Enable transmission
 
@@ -28,7 +28,7 @@ int usart_init(void){
     rx_bits.CREN = 1;   // Enables continuous receive
     rx_bits.ADDEN = 0;  // Disables address detection
 
-    RCSTA = *((uint8_t*) &rx_bits);
+    RCSTAbits = rx_bits;
 
     SPBRG = 12;     // 19.231 kBaud
 
