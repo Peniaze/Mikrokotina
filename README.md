@@ -16,10 +16,16 @@ Používateľ si môže na začiatku programu navoliť rozsah teplôt pre otvár
 
 ### Kód:
 
-1. nastavenie UART komunikácie
-2. ovládanie DC/krokového motoru a feedback s momentálnou vzdialenosťou 
-3. čítanie presnej hodnoty teploty pomocou tepelného senzoru
-4. Hlavný stavový automat pre riadenie väžby medzi všetkými rozhraniami
+1. nastavenie UART komunikácie (posielanie stringov, prímanie stringov, prevod stringov na číselnú hodnotu)
+2. ovládanie DC/krokového motoru a feedback s momentálnou vzdialenosťou (meranie vzdialenosti prejdenej motorčekom)
+3. čítanie presnej hodnoty teploty pomocou tepelného senzoru (prevod na percentuálnu hodnotu v intervale zadaných hodnôť, zobrazenie hodnoty na displeji)
+4. Hlavný stavový automat pre riadenie väžby medzi všetkými rozhraniami (inicializácia po power on resete -- uart komunikáciou s počítačom, prepínanie pomocou tlačítka + [debouncer] zobrazenie teploty/percentuálnej hodnoty/vypnutého displeju)
+
+### Rozdelenie:
+> 1. Tomáš
+> 2. Matej
+> 3. Tomáš, Matej
+> 4. Peťo, Samo
 
 ### Dokumentácia:
 
@@ -41,8 +47,6 @@ V e-learninu pri odovzdávaní je tento zoznam:
 > Jeden tým odevzdává jedno PDF, nezapomeňte prosím ve zprávě uvést jména členů týmu. 
 
 Na dokumentácií by som povedal, že sa môžu podieľať všetci v tíme, podľa chuti (je to asi najväčší shit z toho)
-
-Čo sa týka samotného kódu tak asi najprv zistím približne časovú náročnosť jednotlivých úloh a nejako to rozdelím.
 
 Všetko je samozrjeme otvorené hociakým pripomienkam.
 
