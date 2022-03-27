@@ -3,6 +3,7 @@
 #include "pic16f917.h"
 
 #include "uart.h"
+#include "LCD.h"
 #include "brushctrl.h"
 
 // Pragma configuration
@@ -30,6 +31,8 @@
 
 uint8_t _motor_cnt = 0;
 
+//#define _AUTOCOMP
+#ifndef _AUTOCOMP
 void __interrupt() Isr(void){
     // Global interrupt service routine (only 1 interrupt vector)
     if (INTCONbits.INTF){
@@ -41,14 +44,19 @@ void __interrupt() Isr(void){
     }
 
 }
-
+#endif
 
 int main(){
     // Entry point
-
+    
+    LCD_init();
     motor_init();
 
-    TRISAbits.RA4 = 1;  // Configure switch 2 to input
+    float test = 48.95f;
+    //test = 101.0f;
+    LCD_show_number(test);
+
+    TRISAbits.TRISA4 = 1;  // Configure switch 2 to input
     
     while (PORTAbits.RA4);  // Wait for button press
 
