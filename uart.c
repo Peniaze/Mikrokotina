@@ -6,7 +6,7 @@
 #include "uart.h"
 
 void put_char(char data);
-char read_char();
+char read_char(void);
 
 void usart_init(void){
     TXSTAbits.TXEN = 1; //transmit enable
@@ -32,11 +32,11 @@ void put_char(char data){
     TXREG = data;
 }
 
+char buf[5] = {0};
 //receive string from UART
 //return first 4 received char or less and last char is \n
-char * receive_str(){
+char * receive_str(void){
     RCSTAbits.CREN = 1; //enabled receive
-    char buf[5] = {0};
     uint8_t i = 0;
     while(i < 5){
         buf[i] = read_char();
@@ -51,7 +51,7 @@ char * receive_str(){
     return buf;
 }
 
-char read_char(){                          
+char read_char(void){
     while(!RCIF);
     return RCREG;
 }

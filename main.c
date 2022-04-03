@@ -64,10 +64,10 @@ int main(){
 
     float test = 0;
     float temp = 0;
-    uint8_t quest_1[10] = "MIN TEMP:";
-    uint8_t quest_2[10] = "MAX TEMP:";
-    uint8_t st_min[5] = {0};
-    uint8_t st_max[5] = {0};
+    char quest_1[10] = "MIN TEMP:";
+    char quest_2[10] = "MAX TEMP:";
+    char st_min[5] = {0};
+    char st_max[5] = {0};
     float fl_min = 0;
     float fl_max = 0;
     
@@ -85,7 +85,7 @@ int main(){
         cp_str(st_min, receive_str());
     }
     send_str(st_min);
-    fl_min = atof(st_min);
+    fl_min = (float)atof(st_min);
     
     //ask for max temperature, receive max temperature and send back
     send_str(quest_2);
@@ -95,7 +95,7 @@ int main(){
         cp_str(st_max, receive_str());
     }
     send_str(st_max);
-    fl_max = atof(st_max);
+    fl_max = (float)atof(st_max);
     
     //while (PORTAbits.RA4);  // Wait for button press
     

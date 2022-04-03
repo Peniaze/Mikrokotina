@@ -21,7 +21,7 @@ uint8_t sample_adc(){
 
 //measure temperature on sensor, return in Celsius
 float read_temp(){
-    return ((sample_adc() / 51.2) - 0.5) / 0.01; //conversion voltage to temperature
+    return ((sample_adc() / 51.2f) - 0.5f) / 0.01f; //conversion voltage to temperature
 }
 
 
