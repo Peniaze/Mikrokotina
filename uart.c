@@ -1,37 +1,92 @@
 #include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "pic16f917.h"
 #include "uart.h"
 
-void putch(char data){
-    while (!TXIF)
-        continue;
+void usart_init(void){
+    TXSTAbits.TXEN = 1; //transmit enable
+    TXSTAbits.BRGH = 1; //High speed
+    
+    RCSTAbits.SPEN = 1; //enabled serial port
+    RCSTAbits.CREN = 1; //enabled receive
+    
+    SPBRG = 25; //Baud rate 9600
+}
+
+//send string by UART
+void send_str(char * str){
+    uint8_t i = 0;
+    while(i < strlen(str)){
+        put_char(str[i]);
+        i++;
+    }
+}
+
+void put_char(char data){
+    while (!TRMT);
     TXREG = data;
 }
 
-int usart_init(void){
-    // Initialization
-    // Baud rate == Fosc/(64 * (X+1))
-    // X --> SPBRG register
-    TXSTAbits_t tx_bits;
-    tx_bits.CSRC = 0;  // Don't care
-    tx_bits.TX9 = 0;   // 8-bit transmission
-    tx_bits.SYNC = 0;  // Asynchronous mode
-    tx_bits.BRGH = 1;  // High speed
-    TXSTAbits = tx_bits;
-    TXIE = 1;           // Enable interrupt
-    TXEN = 1;           // Enable transmission
-
-    RCSTAbits_t rx_bits;
-    rx_bits.SPEN = 1;   // Serial port enabled
-    rx_bits.RX9 = 0;    // 8-bit reception
-    rx_bits.SREN = 0;   // Don't care
-    rx_bits.CREN = 1;   // Enables continuous receive
-    rx_bits.ADDEN = 0;  // Disables address detection
-
-    RCSTAbits = rx_bits;
-
-    SPBRG = 12;     // 19.231 kBaud
-
-    return 0;
+//receive string from UART
+//return first 4 received char or less and last char is \n
+char * receive_str(){
+    RCSTAbits.CREN = 1; //enabled receive
+    char buf[5] = {0};
+    uint8_t i = 0;
+    while(i < 5){
+        buf[i] = read_char();
+        if(buf[i] == '\n'){
+            RCSTAbits.CREN = 0; //disable receive
+            break;
+        }
+        i++;
+    }
+    RCSTAbits.CREN = 0; //disable receive
+    buf[4] = '\n';
+    return buf;
 }
 
+char read_char(){                          
+    while(!RCIF);
+    return RCREG;
+}
+
+//copy string form scr to dst without \n
+void cp_str(char * dst,char * src){
+    uint8_t i = 0;
+    while(i < 5){
+        dst[i] = 0;
+        i++;
+    }
+    i = 0;
+    while(src[i] != '\n'){
+        dst[i] = src[i];
+        i++;
+    }
+}
+
+float str_fl(char * str){
+    return atof(str);
+}
+
+void wait_s(uint32_t max){
+    uint32_t i = 0;
+    while(i < max){
+        i++;
+    }
+}
+
+// return 1 if string can be convert to number
+uint8_t check_num(char * buf){
+    uint8_t i = 0;
+    while(i < 5){
+        if(!(((buf[i] >= '0') && (buf[i] <='9')) || (buf[i] == '.') 
+        || (buf[i] == 0))){
+            return 0;
+        }
+        i++;
+    }
+    return 1;
+}
