@@ -1,10 +1,13 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "pic16f917.h"
 
 #include "uart.h"
 #include "LCD.h"
 #include "brushctrl.h"
+#include "temp_sen.h"
 
 // Pragma configuration
 
@@ -48,21 +51,65 @@ void __interrupt() Isr(void){
 
 int main(){
     // Entry point
-    
     LCD_init();
     motor_init();
+    temp_sen_init();
+    usart_init();
 
-    float test = 48.95f;
+    float test = 0;
+    float temp = 0;
+    uint8_t quest_1[10] = "MIN TEMP:";
+    uint8_t quest_2[10] = "MAX TEMP:";
+    uint8_t st_min[5] = {0};
+    uint8_t st_max[5] = {0};
+    float fl_min = 0;
+    float fl_max = 0;
+    
     //test = 101.0f;
     LCD_show_number(test);
-
+     
+    
     TRISAbits.TRISA4 = 1;  // Configure switch 2 to input
     
+    //ask for min temperature, receive min temperature and send back
+    send_str(quest_1);
+    cp_str(st_min, receive_str());
+    while(check_num(st_min) == 0){  
+        send_str(quest_1);
+        cp_str(st_min, receive_str());
+    }
+    send_str(st_min);
+    fl_min = atof(st_min);
+    
+    //ask for max temperature, receive max temperature and send back
+    send_str(quest_2);
+    cp_str(st_max, receive_str());
+        while(check_num(st_max) == 0){  
+        send_str(quest_2);
+        cp_str(st_max, receive_str());
+    }
+    send_str(st_max);
+    fl_max = atof(st_max);
+    
     while (PORTAbits.RA4);  // Wait for button press
-
+    
+    
     while (1){
-        if (!PORTAbits.RA4)
+        if (!PORTAbits.RA4){
             step_motor(200, 0);
+        }
+        
+        temp = read_temp();   //read temperature on sensor
+        LCD_show_number(temp); 
+        wait_s(100000);
+        LCD_show_number(21.2f);
+      LCD_show_number(fl_min);
+        wait_s(100000);
+        LCD_show_number(fl_max);
+        wait_s(100000);
+        LCD_show_number(to_percent(temp, fl_min , fl_max));
+        wait_s(100000);
+        
     }
     return 0;
 }
