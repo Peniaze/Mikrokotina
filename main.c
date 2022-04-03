@@ -32,6 +32,12 @@
 // SW2  --> RA4         --> button 2
 
 
+//UART communication
+//Baud 9600
+//8bits
+//parity none
+//send string end with '\n' or LF
+
 uint8_t _motor_cnt = 0;
 
 //#define _AUTOCOMP
@@ -91,7 +97,7 @@ int main(){
     send_str(st_max);
     fl_max = atof(st_max);
     
-    while (PORTAbits.RA4);  // Wait for button press
+    //while (PORTAbits.RA4);  // Wait for button press
     
     
     while (1){
@@ -103,7 +109,7 @@ int main(){
         LCD_show_number(temp); 
         wait_s(100000);
         LCD_show_number(21.2f);
-      LCD_show_number(fl_min);
+        LCD_show_number(fl_min);
         wait_s(100000);
         LCD_show_number(fl_max);
         wait_s(100000);

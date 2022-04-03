@@ -3,9 +3,7 @@
 
 void usart_init(void);
 void send_str(char * str);
-void put_char(char data);
 char * receive_str();
-char read_char();
 void cp_str(char * dst,char * src);
 void wait_s(uint32_t max);
 uint8_t check_num(char * buf);
