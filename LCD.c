@@ -80,7 +80,7 @@ void LCD_show_number(float num){
     // Display a single positive number (from 0.0 to 100.0)
 
     if (num<0 || num>100.0){
-        LCD_show_error(0);
+        LCD_show_error(4);
         return;
     }
 

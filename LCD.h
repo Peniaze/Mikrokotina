@@ -13,7 +13,11 @@
 #define NUM_9 0b01111011
 
 // Erorr numbers:
-// 00 --> Number out of limits for display
+// 00 --> Power on reset
+// 01 --> Failed to read min temperature
+// 02 --> Failed to read max temperature
+// 03 --> Wrong button state
+// 04 --> Number out of limits for display
 // 99 --> Error number out of range
 
 void LCD_init(void);

@@ -42,10 +42,10 @@ void motor_init(){
     T2CON = 0b10;           // Prescaler 16x
     T2CONbits.TMR2ON = 1;   // Timer2 enable
     PIE1bits.TMR2IE = 0;    // Disable PWM interrupt
-    PR2 = 0x30;             // Period
+    PR2 = 0x20;             // Period
 
     CCP2CON = 0b00 << 4;    // Two Lsbs for CCPR
-    CCPR2L = 0x18;          // Capture compare register (0x18 for 2.5V)
+    CCPR2L = 0x10;          // Capture compare register (0x10 for 50% duty)
     CCP2CON = 0b1100;       // PWM mode
 }
 
