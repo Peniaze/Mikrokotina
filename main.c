@@ -42,11 +42,12 @@ uint8_t _motor_cnt = 0;
 
 //#define _AUTOCOMP
 #ifndef _AUTOCOMP
-void __interrupt() Isr(void){
+
+void __interrupt() Isr(void) {
     // Global interrupt service routine (only 1 interrupt vector)
-    if (INTCONbits.INTF){
+    if (INTCONbits.INTF) {
         INTCONbits.INTF = 0;
-        if (!--_motor_cnt){
+        if (!--_motor_cnt) {
             PORTDbits.RD7 = 0;
             PORTDbits.RD6 = 0;
         }
@@ -55,7 +56,7 @@ void __interrupt() Isr(void){
 }
 #endif
 
-int main(){
+int main() {
     // Entry point
     LCD_init();
     motor_init();
@@ -70,52 +71,94 @@ int main(){
     char st_max[5] = {0};
     float fl_min = 0;
     float fl_max = 0;
-    
+
+    uint8_t temp_limit_set = 0;
+    OPTION_REG = 0b10000111;
+    float temp_prev = 0;
+    float temp_next = 0;
+    uint8_t rot = 0;
+    uint8_t dir = 0;
+    uint8_t btn_cnt = 0;
+    uint8_t btndbc = 0;
+    int time_cnt = 0;
+
     //test = 101.0f;
     LCD_show_number(test);
-     
-    
-    TRISAbits.TRISA4 = 1;  // Configure switch 2 to input
-    
-    //ask for min temperature, receive min temperature and send back
-    send_str(quest_1);
-    cp_str(st_min, receive_str());
-    while(check_num(st_min) == 0){  
-        send_str(quest_1);
-        cp_str(st_min, receive_str());
-    }
-    send_str(st_min);
-    fl_min = (float)atof(st_min);
-    
-    //ask for max temperature, receive max temperature and send back
-    send_str(quest_2);
-    cp_str(st_max, receive_str());
-        while(check_num(st_max) == 0){  
-        send_str(quest_2);
-        cp_str(st_max, receive_str());
-    }
-    send_str(st_max);
-    fl_max = (float)atof(st_max);
-    
-    //while (PORTAbits.RA4);  // Wait for button press
-    
-    
-    while (1){
-        if (!PORTAbits.RA4){
-            step_motor(200, 0);
+
+
+    TRISAbits.TRISA4 = 1; // Configure switch 2 to input
+
+
+    while (1) {
+        if (temp_limit_set == 0) {
+            step_motor(200, 0); //set default position of the window == closed
+            //ask for min temperature, receive min temperature and send back
+            send_str(quest_1);
+            cp_str(st_min, receive_str());
+            while (check_num(st_min) == 0) {
+                send_str(quest_1);
+                cp_str(st_min, receive_str());
+            }
+            send_str(st_min);
+            fl_min = (float) atoi(st_min);
+
+            //ask for max temperature, receive max temperature and send back
+            send_str(quest_2);
+            cp_str(st_max, receive_str());
+            while (check_num(st_max) == 0) {
+                send_str(quest_2);
+                cp_str(st_max, receive_str());
+            }
+            send_str(st_max);
+            fl_max = (float) atoi(st_max);
+            temp_limit_set = 1; //temperature limits from user were set
         }
-        
-        temp = read_temp();   //read temperature on sensor
-        LCD_show_number(temp); 
-        wait_s(100000);
-        LCD_show_number(21.2f);
-        LCD_show_number(fl_min);
-        wait_s(100000);
-        LCD_show_number(fl_max);
-        wait_s(100000);
-        LCD_show_number(to_percent(temp, fl_min , fl_max));
-        wait_s(100000);
-        
+        if (temp_limit_set == 1) { //check if temperature limits from user were set
+            if (INTCONbits.T0IF) { //timer 0, 25ms
+                INTCONbits.T0IF = 0;
+                TMR0 = 60; //25ms 
+                time_cnt++;
+                if (time_cnt >= 200) { //25ms * 2400 == 1 minute //400 10 second
+                    time_cnt = 0;
+                    temp = read_temp(); //read actual temperature from sensor 
+                    temp_next = to_percent(temp, fl_min, fl_max); //conversion actual temp to percent
+                    if (temp_next > temp_prev) { //hotter or colder - set direction of the rotation
+                        dir = 1;
+                    } else {
+                        dir = 0;
+                    }
+                    rot = 2 * abs(temp_next - temp_prev); //number of rotations for DC motor
+                    temp_prev = temp_next; //update of temp value
+                    if (rot > 0) { //adjust the window position if the temperature has changed
+                        step_motor(rot, dir);
+                    }
+                }
+            }
+        }
+        if (!PORTAbits.RA4) { //board button
+            btndbc = (btndbc << 1) | (!PORTAbits.RA4) | 0xe000; //button debounc
+            if (btndbc == 1) {
+                btn_cnt++;
+                switch (btn_cnt) {
+                    case 1:
+                        LCD_show_number(fl_min);
+                        break;
+                    case 2:
+                        LCD_show_number(fl_max);
+                        break;
+                    case 3:
+                        //temp = read_temp(); //read temperature on sensor
+                        LCD_show_number(temp);
+                        break;
+                    case 4:
+                        LCD_show_number(to_percent(temp, fl_min, fl_max));
+                        btn_cnt = 0;
+                        break;
+                }
+            }
+        } else {
+            btndbc = 0;
+        }
     }
     return 0;
 }
