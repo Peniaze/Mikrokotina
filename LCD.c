@@ -4,6 +4,17 @@
 #include "LCD.h"
 #include "pic16f917.h"
 
+#define NUM_0 0b01111110
+#define NUM_1 0b00110000
+#define NUM_2 0b01101101
+#define NUM_3 0b01111001
+#define NUM_4 0b00110011
+#define NUM_5 0b01011011
+#define NUM_6 0b01011111
+#define NUM_7 0b01110000
+#define NUM_8 0b01111111
+#define NUM_9 0b01111011
+
 // Array of all digits
 uint8_t list_nums[] = {NUM_0, NUM_1, NUM_2, NUM_3, NUM_4, NUM_5, NUM_6, NUM_7, NUM_8, NUM_9};
 

@@ -73,6 +73,11 @@ int main() {
     float fl_max = 0;
 
     uint8_t temp_limit_set = 0;
+    // Prescaler 1:128 for TMR0
+    // Interrupt on falling edge?
+    // TMR0 clock source select -> Internal instruction cycle (CLKO)
+    // TMR0 increment on low-to-high
+    // Prescaler is assigned to TMR0
     OPTION_REG = 0b10000111;
     float temp_prev = 0;
     float temp_next = 0;
