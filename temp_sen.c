@@ -13,15 +13,16 @@ void temp_sen_init(){
     
 }
 
-uint8_t sample_adc(){
+//return digital value of analog signal in 10 bits
+uint16_t sample_adc(){
     ADCON0bits.GO = 1;      //sample adc
     while(ADCON0bits.GO);
-    return ADRESH;
+    return ((uint16_t)ADRESH << 2) | (ADRESL >> 6);
 }
 
 //measure temperature on sensor, return in Celsius
 float read_temp(){
-    return ((sample_adc() / 51.2f) - 0.5f) / 0.01f; //conversion voltage to temperature
+    return ((sample_adc() / 204.6f) - 0.5f) / 0.01f; //conversion voltage to temperature
 }
 
 
